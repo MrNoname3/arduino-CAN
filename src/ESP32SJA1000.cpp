@@ -3,7 +3,7 @@
 
 #ifdef ARDUINO_ARCH_ESP32
 
-#include "esp_intr.h"
+#include "esp_intr_alloc.h"
 #include "soc/dport_reg.h"
 #include "driver/gpio.h"
 
@@ -297,7 +297,7 @@ int ESP32SJA1000Class::filter(int id, int mask)
 int ESP32SJA1000Class::filterExtended(long id, long mask)
 {
   id &= 0x1FFFFFFF;
-  mask &= ~(mask & 0x1FFFFFFF);
+  mask = ~(mask & 0x1FFFFFFF);
 
   modifyRegister(REG_MOD, 0x17, 0x01); // reset
 
@@ -309,7 +309,7 @@ int ESP32SJA1000Class::filterExtended(long id, long mask)
   writeRegister(REG_AMRn(0), mask >> 21);
   writeRegister(REG_AMRn(1), mask >> 13);
   writeRegister(REG_AMRn(2), mask >> 5);
-  writeRegister(REG_AMRn(3), (mask << 3) | 0x1f);
+  writeRegister(REG_AMRn(3), (mask << 3) | 0x7f);
 
   modifyRegister(REG_MOD, 0x17, 0x00); // normal
 
